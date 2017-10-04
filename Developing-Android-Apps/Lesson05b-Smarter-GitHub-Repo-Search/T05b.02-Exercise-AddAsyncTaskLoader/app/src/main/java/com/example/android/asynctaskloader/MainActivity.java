@@ -139,8 +139,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public Loader<String> onCreateLoader(int id, final Bundle args) {
         // TODO (4) Return a new AsyncTaskLoader<String> as an anonymous inner class with this as the constructor's parameter
         return new AsyncTaskLoader<String>(this) {
+
+            // TODO (9) Override loadInBackground
+
+            // Within loadInBackground
+            // TODO (10) Get the String for our URL from the bundle passed to onCreateLoader
+
+            // TODO (11) If the URL is null or empty, return null
+
+            // TODO (12) Copy the try / catch block from the AsyncTask's doInBackground method
+            // END - loadInBackground
             @Override
             public String loadInBackground() {
+                String searchString = args.getString(SEARCH_QUERY_URL_EXTRA);
                 return null;
             }
 
@@ -157,23 +168,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 else
                     mLoadingIndicator.setVisibility(View.VISIBLE);
             }
+            // TODO (8) Force a load
+            // END - onStartLoading
         };
 
 
 
 
-        // TODO (8) Force a load
-        // END - onStartLoading
 
-        // TODO (9) Override loadInBackground
 
-        // Within loadInBackground
-        // TODO (10) Get the String for our URL from the bundle passed to onCreateLoader
 
-        // TODO (11) If the URL is null or empty, return null
-
-        // TODO (12) Copy the try / catch block from the AsyncTask's doInBackground method
-        // END - loadInBackground
         //return null;
     }
 

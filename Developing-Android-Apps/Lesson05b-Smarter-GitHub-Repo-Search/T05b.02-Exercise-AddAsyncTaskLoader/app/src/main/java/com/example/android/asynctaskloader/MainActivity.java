@@ -148,14 +148,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             // COMPLETED (11) If the URL is null or empty, return null
 
-            // TODO (12) Copy the try / catch block from the AsyncTask's doInBackground method
+            // COMPLETED (12) Copy the try / catch block from the AsyncTask's doInBackground method
             // END - loadInBackground
             @Override
             public String loadInBackground() {
                 String searchString = args.getString(SEARCH_QUERY_URL_EXTRA);
+                String githubSearchResults = null;
                 if(searchString==null)
                     return null;
-                return null;
+                try {
+                    githubSearchResults = NetworkUtils.getResponseFromHttpUrl(searchString);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return githubSearchResults;
             }
 
             // COMPLETED (5) Override onStartLoading

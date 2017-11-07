@@ -15,12 +15,14 @@
  */
 package com.example.android.asynctaskloader;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,9 +41,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     /* A constant to save and restore the URL that is being displayed */
     private static final String SEARCH_QUERY_URL_EXTRA = "query";
 
-    // TODO (28) Remove the key for storing the search results JSON
+    // COMPLETED (28) Remove the key for storing the search results JSON
     /* A constant to save and restore the JSON that is being displayed */
-    private static final String SEARCH_RESULTS_RAW_JSON = "results";
+    // private static final String SEARCH_RESULTS_RAW_JSON = "results";
 
     // COMPLETED (2) Create a constant int to uniquely identify your loader. Call it GITHUB_SEARCH_LOADER
     private final static int GITHUB_SEARCH_LOADER = 2;
@@ -71,15 +73,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (savedInstanceState != null) {
             String queryUrl = savedInstanceState.getString(SEARCH_QUERY_URL_EXTRA);
 
-            // TODO (26) Remove the code that retrieves the JSON
-            String rawJsonSearchResults = savedInstanceState.getString(SEARCH_RESULTS_RAW_JSON);
+            // COMPLETED (26) Remove the code that retrieves the JSON
+            //String rawJsonSearchResults = savedInstanceState.getString(SEARCH_RESULTS_RAW_JSON);
 
             mUrlDisplayTextView.setText(queryUrl);
-            // TODO (25) Remove the code that displays the JSON
-            mSearchResultsTextView.setText(rawJsonSearchResults);
+            // COMPLETED (25) Remove the code that displays the JSON
+            // mSearchResultsTextView.setText(rawJsonSearchResults);
         }
 
-        // TODO (24) Initialize the loader with GITHUB_SEARCH_LOADER as the ID, null for the bundle, and this for the context
+        // COMPLETED (24) Initialize the loader with GITHUB_SEARCH_LOADER as the ID, null for the bundle, and this for the context
+        getSupportLoaderManager().initLoader(GITHUB_SEARCH_LOADER,null,this);
     }
 
     /**
@@ -90,20 +93,31 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private void makeGithubSearchQuery() {
         String githubQuery = mSearchBoxEditText.getText().toString();
 
-        // TODO (17) If no search was entered, indicate that there isn't anything to search for and return
-
+        // COMPLETED (17) If no search was entered, indicate that there isn't anything to search for and return
+        if(TextUtils.isEmpty(githubQuery)) {
+            mUrlDisplayTextView.setText("Please enter a query");
+            return;
+        }
         URL githubSearchUrl = NetworkUtils.buildUrl(githubQuery);
         mUrlDisplayTextView.setText(githubSearchUrl.toString());
 
-        // TODO (18) Remove the call to execute the AsyncTask
-        new GithubQueryTask().execute(githubSearchUrl);
+        // COMPLETED (18) Remove the call to execute the AsyncTask
+        // new GithubQueryTask().execute(githubSearchUrl);
 
-        // TODO (19) Create a bundle called queryBundle
-        // TODO (20) Use putString with SEARCH_QUERY_URL_EXTRA as the key and the String value of the URL as the value
-
-        // TODO (21) Call getSupportLoaderManager and store it in a LoaderManager variable
-        // TODO (22) Get our Loader by calling getLoader and passing the ID we specified
-        // TODO (23) If the Loader was null, initialize it. Else, restart it.
+        // COMPLETED (19) Create a bundle called queryBundle
+        // COMPLETED (20) Use putString with SEARCH_QUERY_URL_EXTRA as the key and the String value of the URL as the value
+        Bundle bundle = new Bundle();
+        bundle.putString(SEARCH_QUERY_URL_EXTRA,githubSearchUrl.toString());
+        // COMPLETED (21) Call getSupportLoaderManager and store it in a LoaderManager variable
+        LoaderManager loaderManager = getSupportLoaderManager();
+        // COMPLETED (22) Get our Loader by calling getLoader and passing the ID we specified
+        Loader<String> githubSearchLoader = loaderManager.getLoader(GITHUB_SEARCH_LOADER);
+        // COMPLETED (23) If the Loader was null, initialize it. Else, restart it.
+        if(githubSearchLoader == null){
+            loaderManager.initLoader(GITHUB_SEARCH_LOADER,bundle,this);
+        }else {
+            loaderManager.restartLoader(GITHUB_SEARCH_LOADER,bundle,this);
+        }
     }
 
     /**
@@ -137,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     // Within onCreateLoader
     @Override
     public Loader<String> onCreateLoader(int id, final Bundle args) {
-        // TODO (4) Return a new AsyncTaskLoader<String> as an anonymous inner class with this as the constructor's parameter
+        // COMPLETED (4) Return a new AsyncTaskLoader<String> as an anonymous inner class with this as the constructor's parameter
         return new AsyncTaskLoader<String>(this) {
 
             // COMPLETED (9) Override loadInBackground
@@ -153,11 +167,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             @Override
             public String loadInBackground() {
                 String searchString = args.getString(SEARCH_QUERY_URL_EXTRA);
+                URL url = NetworkUtils.buildUrl(searchString);
                 String githubSearchResults = null;
                 if(searchString==null)
                     return null;
                 try {
-                    githubSearchResults = NetworkUtils.getResponseFromHttpUrl(searchString);
+                    githubSearchResults = NetworkUtils.getResponseFromHttpUrl(url);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -190,12 +205,25 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         //return null;
     }
+    // COMPLETED (13) Override onLoadFinished
 
+
+    // Within onLoadFinished
+    // COMPLETED (14) Hide the loading indicator
+
+    // COMPLETED  (15) Use the same logic used in onPostExecute to show the data or the error message
+    // END - onLoadFinished
     @Override
     public void onLoadFinished(Loader<String> loader, String data) {
-
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
+        if (data != null && !data.equals("")) {
+            showJsonDataView();
+            mSearchResultsTextView.setText(data);
+        } else {
+            showErrorMessage();
+        }
     }
-
+    // COMPLETED (16) Override onLoaderReset as it is part of the interface we implement, but don't do anything in this method
     @Override
     public void onLoaderReset(Loader<String> loader) {
 
@@ -204,17 +232,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 
 
-    // TODO (13) Override onLoadFinished
 
-        // Within onLoadFinished
-        // TODO (14) Hide the loading indicator
 
-        // TODO (15) Use the same logic used in onPostExecute to show the data or the error message
-        // END - onLoadFinished
 
-    // TODO (16) Override onLoaderReset as it is part of the interface we implement, but don't do anything in this method
-
-    // TODO (29) Delete the AsyncTask class
+    // COMPLETED (29) Delete the AsyncTask class
+    /*
     public class GithubQueryTask extends AsyncTask<URL, Void, String> {
 
         @Override
@@ -246,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         }
     }
-
+    */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
@@ -270,8 +292,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         String queryUrl = mUrlDisplayTextView.getText().toString();
         outState.putString(SEARCH_QUERY_URL_EXTRA, queryUrl);
 
-        // TODO (27) Remove the code that persists the JSON
-        String rawJsonSearchResults = mSearchResultsTextView.getText().toString();
-        outState.putString(SEARCH_RESULTS_RAW_JSON, rawJsonSearchResults);
+        // COMPLETED (27) Remove the code that persists the JSON
+        // String rawJsonSearchResults = mSearchResultsTextView.getText().toString();
+        //outState.putString(SEARCH_RESULTS_RAW_JSON, rawJsonSearchResults);
     }
 }

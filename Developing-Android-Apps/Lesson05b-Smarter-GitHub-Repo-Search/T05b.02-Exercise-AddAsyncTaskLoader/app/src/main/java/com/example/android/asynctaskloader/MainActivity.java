@@ -167,16 +167,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             @Override
             public String loadInBackground() {
                 String searchString = args.getString(SEARCH_QUERY_URL_EXTRA);
-                URL url = NetworkUtils.buildUrl(searchString);
+
                 String githubSearchResults = null;
-                if(searchString==null)
+                if(searchString==null  || TextUtils.isEmpty(searchString))
                     return null;
                 try {
+                    URL url = new URL(searchString);
                     githubSearchResults = NetworkUtils.getResponseFromHttpUrl(url);
+                    return githubSearchResults;
                 } catch (IOException e) {
                     e.printStackTrace();
+                    return null;
                 }
-                return githubSearchResults;
+                //return githubSearchResults;
             }
 
             // COMPLETED (5) Override onStartLoading
@@ -191,6 +194,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     return;
                 else
                     mLoadingIndicator.setVisibility(View.VISIBLE);
+                forceLoad();
             }
             // COMPLETED (8) Force a load
 

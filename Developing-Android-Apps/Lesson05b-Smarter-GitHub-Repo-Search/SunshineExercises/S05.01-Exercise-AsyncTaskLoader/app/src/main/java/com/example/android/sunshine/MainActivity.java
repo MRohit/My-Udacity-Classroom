@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapterOn
     private ForecastAdapter mForecastAdapter;
 
     private TextView mErrorMessageDisplay;
-
+    private static final Integer FORECAST_LOADER_ID = 1;
     private ProgressBar mLoadingIndicator;
 
     @Override
@@ -101,9 +101,12 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapterOn
          */
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
-        // TODO (7) Remove the code for the AsyncTask and initialize the AsyncTaskLoader
+        // COMPLETED (7) Remove the code for the AsyncTask and initialize the AsyncTaskLoader
         /* Once all of our views are setup, we can load the weather data. */
-        loadWeatherData();
+        LoaderManager.LoaderCallbacks<String[]> callbacks = MainActivity.this;
+        Bundle bundle = null;
+        getSupportLoaderManager().initLoader(FORECAST_LOADER_ID,bundle,callbacks);
+        //loadWeatherData();
     }
 
     /**
@@ -114,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapterOn
         showWeatherDataView();
 
         String location = SunshinePreferences.getPreferredWeatherLocation(this);
-        new FetchWeatherTask().execute(location);
+        //new FetchWeatherTask().execute(location);
     }
 
 
@@ -163,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapterOn
     // COMPLETED (2) Within onCreateLoader, return a new AsyncTaskLoader that looks a lot like the existing FetchWeatherTask.
     // COMPLETED (3) Cache the weather data in a member variable and deliver it in onStartLoading.
 
-    // COMPLETED (4) When the load is finished, show either the data or an error message if there is no data
+
 
     @Override
     public Loader<String[]> onCreateLoader(int id, final Bundle args) {
@@ -201,6 +204,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapterOn
                     deliverResult(weatherData);
                 }else{
                     mLoadingIndicator.setVisibility(View.VISIBLE);
+                    forceLoad();
                 }
 
             }
@@ -214,18 +218,27 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapterOn
 
 
     }
-
+    // COMPLETED (4) When the load is finished, show either the data or an error message if there is no data
     @Override
     public void onLoadFinished(Loader<String[]> loader, String[] data) {
-
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
+        if (data != null) {
+            showWeatherDataView();
+            mForecastAdapter.setWeatherData(data);
+        } else {
+            showErrorMessage();
+        }
     }
 
     @Override
     public void onLoaderReset(Loader<String[]> loader) {
 
     }
-
-    // TODO (6) Remove any and all code from MainActivity that references FetchWeatherTask
+    private void resetWeatherData() {
+        mForecastAdapter.setWeatherData(null);
+    }
+    // COMPLETED (6) Remove any and all code from MainActivity that references FetchWeatherTask
+    /*
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
         @Override
@@ -237,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapterOn
         @Override
         protected String[] doInBackground(String... params) {
 
-            /* If there's no zip code, there's nothing to look up. */
+            /* If there's no zip code, there's nothing to look up. /
             if (params.length == 0) {
                 return null;
             }
@@ -271,7 +284,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapterOn
             }
         }
     }
-
+    */
     /**
      * This method uses the URI scheme for showing a location found on a
      * map. This super-handy intent is detailed in the "Common Intents"
@@ -311,10 +324,10 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapterOn
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        // TODO (5) Refactor the refresh functionality to work with our AsyncTaskLoader
+        // COMPLETED (5) Refactor the refresh functionality to work with our AsyncTaskLoader
         if (id == R.id.action_refresh) {
-            mForecastAdapter.setWeatherData(null);
-            loadWeatherData();
+            resetWeatherData();
+            getSupportLoaderManager().restartLoader(FORECAST_LOADER_ID,null,this);
             return true;
         }
 

@@ -2,4 +2,7 @@
 <resources>
 
     <bool name="default_bass_value">true</bool>
+    <bool name="default_show_mid">true</bool>
+    <bool name="default_show_treble">true</bool>
+
 </resources>

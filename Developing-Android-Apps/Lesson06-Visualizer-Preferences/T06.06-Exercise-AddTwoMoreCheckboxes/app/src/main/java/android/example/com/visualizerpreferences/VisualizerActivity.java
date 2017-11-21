@@ -70,7 +70,7 @@ public class VisualizerActivity extends AppCompatActivity implements SharedPrefe
         }else if(key.equals(getString(R.string.pref_show_mid_key))) {
             mVisualizerView.setShowMid(sharedPreferences.getBoolean(key,getResources().getBoolean(R.bool.pref_hide_mid_default)));
         }else if(key.equals(getString(R.string.pref_show_treble_key))) {
-            mVisualizerView.setShowMid(sharedPreferences.getBoolean(key,getResources().getBoolean(R.bool.pref_hide_treble_default)));
+            mVisualizerView.setShowTreble(sharedPreferences.getBoolean(key,getResources().getBoolean(R.bool.pref_hide_treble_default)));
         }
     }
 

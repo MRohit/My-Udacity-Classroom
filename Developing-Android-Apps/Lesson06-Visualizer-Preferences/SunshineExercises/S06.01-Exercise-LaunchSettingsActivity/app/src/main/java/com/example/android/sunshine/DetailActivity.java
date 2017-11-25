@@ -63,8 +63,6 @@ public class DetailActivity extends AppCompatActivity {
             Intent startSettings = new Intent(this,SettingsActivity.class);
             startActivity(startSettings);
             return true;
-        } else if(id == R.id.home) {
-            NavUtils.navigateUpFromSameTask(this);
         }
         return super.onOptionsItemSelected(item);
     }

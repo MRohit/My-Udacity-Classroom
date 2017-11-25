@@ -2,6 +2,7 @@ package com.example.android.sunshine;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -62,6 +63,8 @@ public class DetailActivity extends AppCompatActivity {
             Intent startSettings = new Intent(this,SettingsActivity.class);
             startActivity(startSettings);
             return true;
+        } else if(id == R.id.home) {
+            NavUtils.navigateUpFromSameTask(this);
         }
         return super.onOptionsItemSelected(item);
     }

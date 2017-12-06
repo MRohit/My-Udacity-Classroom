@@ -131,6 +131,13 @@ public class TaskContentProvider extends ContentProvider {
             case TASKS:
                 cursor = db.query(TaskContract.TaskEntry.TABLE_NAME,projection,selection,selectionArgs,null,null,sortOrder);
                 break;
+
+            case TASK_WITH_ID:
+                String id = uri.getPathSegments().get(1);
+                String mSelection = "_id=?";
+                String [] mSelectionArgs = new String [] {id};
+                cursor = db.query(TaskContract.TaskEntry.TABLE_NAME,projection,mSelection,mSelectionArgs,null,null,sortOrder);
+                break;
             default:
                 throw new UnsupportedOperationException("Operation not supported");
         }

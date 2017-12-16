@@ -1,8 +1,8 @@
 # My-Udacity-Classroom
 
 On going Courses:
-2. Intro to Machine Learning (Just Started)
-3. Intro to python (90 % completed)
+1. Intro to Machine Learning (Just Started)
+2. Intro to python (90 % completed)
 
 
 Courses Completed:

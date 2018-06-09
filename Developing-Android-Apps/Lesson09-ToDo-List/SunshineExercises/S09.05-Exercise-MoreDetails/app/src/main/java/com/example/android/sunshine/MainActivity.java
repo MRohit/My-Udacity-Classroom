@@ -272,6 +272,7 @@ public class MainActivity extends AppCompatActivity implements
         weatherDetailIntent.setData(uriForDateClicked);
         startActivity(weatherDetailIntent);
     }
+    
 
     /**
      * This method will make the View for the weather data visible and hide the error message and

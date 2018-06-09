@@ -26,6 +26,7 @@
         android:drawableStart="@drawable/ic_star"
         android:drawableLeft="@drawable/ic_star"
         android:text="@string/starred" />
+        android:text="@string/starred" />
 
     <TextView
         style="@style/folderStyle"
